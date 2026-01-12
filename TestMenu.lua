@@ -1,5 +1,5 @@
 -- =====================================================
--- SUSANO MOD MENU V4 - GENERIC / CLEAN / WORKING
+-- SUSANO MOD MENU V4 - CLEAN / WORKING / NON BLOQUANT
 -- =====================================================
 
 -- ===================== STATE =====================
@@ -97,7 +97,7 @@ local PersonnageActions = {
     }
 }
 
--- ===================== DRAW =====================
+-- ===================== DRAW FUNCTIONS =====================
 local function drawBox()
     Susano.DrawRect(0.05, 0.1, 0.32, 0.65, table.unpack(THEME.bg))
 end
@@ -130,6 +130,9 @@ Citizen.CreateThread(function()
         -- TOGGLE MENU
         if Susano.GetAsyncKeyState(0x2D) == 1 then -- INSERT
             menuOpen = not menuOpen
+            if Susano.EnableOverlay then
+                Susano.EnableOverlay(menuOpen) -- overlay actif seulement quand menu ouvert
+            end
             menuState = "categories"
             selectedIndex = 1
             Citizen.Wait(250)
@@ -137,7 +140,7 @@ Citizen.CreateThread(function()
 
         if not menuOpen then goto skip end
 
-        -- DRAW
+        -- DRAW MENU
         if menuState == "categories" then
             drawMenu("SUSANO MOD MENU V4", Categories)
         elseif menuState == "executor" then
@@ -149,19 +152,19 @@ Citizen.CreateThread(function()
         end
 
         -- NAV DOWN
-        if Susano.GetAsyncKeyState(0x28) == 1 then
+        if Susano.GetAsyncKeyState(0x28) == 1 then -- flèche bas
             selectedIndex = selectedIndex + 1
             Citizen.Wait(120)
         end
 
         -- NAV UP
-        if Susano.GetAsyncKeyState(0x26) == 1 then
+        if Susano.GetAsyncKeyState(0x26) == 1 then -- flèche haut
             selectedIndex = math.max(selectedIndex - 1, 1)
             Citizen.Wait(120)
         end
 
         -- ENTER
-        if Susano.GetAsyncKeyState(0x0D) == 1 then
+        if Susano.GetAsyncKeyState(0x0D) == 1 then -- Enter
             local list =
                 menuState == "categories" and Categories or
                 menuState == "executor" and ExecutorActions or
@@ -181,7 +184,7 @@ Citizen.CreateThread(function()
         end
 
         -- BACK
-        if Susano.GetAsyncKeyState(0x08) == 1 then
+        if Susano.GetAsyncKeyState(0x08) == 1 then -- Backspace
             menuState = "categories"
             selectedIndex = 1
             Citizen.Wait(200)
